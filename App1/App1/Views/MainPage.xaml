@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:App1"
+             xmlns:converters="clr-namespace:App1.Converters"
+             xmlns:behaviors="clr-namespace:Behaviors;assembly=Behaviors" 
+             x:Class="App1.MainPage">
+
+
+    <ContentPage.BindingContext>
+        <local:MainViewModel />
+    </ContentPage.BindingContext>
+    
+    <ContentPage.Resources>
+
+        <ResourceDictionary>
+
+            <converters:TypeToStringConverter x:Key="TypeToStringConverter" />
+
+            <!--Label-->
+            <ControlTemplate x:Key="LabelTemplate">
+                <Grid BindingContext="{TemplateBinding BindingContext}">
+                    <Label Text="{Binding Text}" />
+                </Grid>
+            </ControlTemplate>
+
+            <!--DatePicker-->
+            <ControlTemplate x:Key="DatePickerTemplate">
+                <Grid BindingContext="{TemplateBinding BindingContext}">
+                    <DatePicker Date="{Binding Date, Mode=TwoWay}" Format="yyyy/MM/dd" />
+                </Grid>
+            </ControlTemplate>
+
+            <!--MultiTemplate-->
+            <DataTemplate x:Key="MultiTemplate">
+                <ViewCell>
+                    <ContentView x:Name="contentView" Content="{Binding}" >
+                        <ContentView.Behaviors>
+
+                            <!--Label-->
+                            <behaviors:DataChangedBehavior Binding="{Binding Converter={StaticResource TypeToStringConverter}}" Value="MainLabelItemViewModel" ComparisonCondition="Equal">
+                                <behaviors:SetPropertyAction TargetObject="{x:Reference contentView}" PropertyName="ControlTemplate" Value="{StaticResource LabelTemplate}" />
+                            </behaviors:DataChangedBehavior>
+
+                            <!--DatePicker-->
+                            <behaviors:DataChangedBehavior Binding="{Binding Converter={StaticResource TypeToStringConverter}}" Value="MainDatePickerItemViewModel" ComparisonCondition="Equal">
+                                <behaviors:SetPropertyAction TargetObject="{x:Reference contentView}" PropertyName="ControlTemplate" Value="{StaticResource DatePickerTemplate}" />
+                            </behaviors:DataChangedBehavior>
+
+                        </ContentView.Behaviors>
+                    </ContentView>
+                </ViewCell>
+            </DataTemplate>
+
+        </ResourceDictionary>
+        
+    </ContentPage.Resources>
+
+    <Grid Margin="0,20,0,0">
+        
+        <ListView ItemsSource="{Binding Items}"
+                  ItemTemplate="{StaticResource MultiTemplate}"
+                  SeparatorVisibility="None"
+                  />
+
+    </Grid>
+</ContentPage>
